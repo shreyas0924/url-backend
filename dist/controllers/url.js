@@ -14,21 +14,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleNewShortUrl = void 0;
 const url_1 = __importDefault(require("../models/url"));
-const shortid_1 = __importDefault(require("shortid"));
+const uuid_1 = require("uuid");
+function generateShortUUID() {
+    // Generate a standard UUID
+    const uuid = (0, uuid_1.v4)();
+    // Take the first 8 characters
+    const shortUUID = uuid.slice(0, 8);
+    return shortUUID;
+}
+// Usage
+const shortUUID = generateShortUUID();
 function handleNewShortUrl(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = req.body;
         if (!body.url) {
             return res.status(400).json({ error: "URL is required" });
         }
-        const shortID = (0, shortid_1.default)();
+        const shortId = shortUUID;
         try {
             const newUrl = yield url_1.default.create({
-                shortId: shortID,
+                shortId,
                 redirectURL: body.url,
                 visitHistory: [],
             });
-            return res.status(201).json(newUrl.shortId);
+            const shortenedId = newUrl.shortId;
+            console.log(`Short ID : ${shortenedId}`);
+            return res.status(201).json(shortenedId);
         }
         catch (error) {
             console.error("Error generating short URL:", error);

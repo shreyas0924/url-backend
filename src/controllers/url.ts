@@ -28,7 +28,9 @@ export async function handleNewShortUrl(req: Request, res: Response) {
       redirectURL: body.url,
       visitHistory: [],
     });
-    return res.status(201).json(newUrl.shortId);
+    const shortenedId = newUrl.shortId;
+    console.log(`Short ID : ${shortenedId}`);
+    return res.status(201).json({ id: shortenedId });
   } catch (error) {
     console.error("Error generating short URL:", error);
     return res.status(500).json({ error: "Internal Server Error" });
